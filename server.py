@@ -11,7 +11,7 @@ app = Flask(__name__)
 @app.route("/")
 def index():
     """Render the input form."""
-    return render_template("response.html")
+    return render_template("index.html")
 
 
 @app.route("/emotionDetector")
