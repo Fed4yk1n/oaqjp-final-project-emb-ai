@@ -18,11 +18,17 @@ def index():
 def emotion_detector_route():
     """Analyze query text and render the result or a blank-input error."""
     text_to_analyse = request.args.get("textToAnalyze", "").strip()
-    if not text_to_analyse:
-        return "Please enter a text to analyze.", 400
-
     result = emotion_detector(text_to_analyse)
-    return render_template("response.html", result=result, text=text_to_analyse)
+    if result["dominant_emotion"] is None:
+        return "Invalid Input! Please try again."
+
+    response_text = (
+        f"For the given statement, the system response is 'anger': {result['anger']}, "
+        f"'disgust': {result['disgust']}, 'fear': {result['fear']}, "
+        f"'joy': {result['joy']}, 'sadness': {result['sadness']}. "
+        f"The dominant emotion is {result['dominant_emotion']}."
+    )
+    return response_text
 
 
 if __name__ == "__main__":

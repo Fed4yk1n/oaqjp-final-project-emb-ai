@@ -1,3 +1,4 @@
+import json
 import unittest
 from unittest.mock import Mock, patch
 
@@ -8,7 +9,7 @@ class TestEmotionDetector(unittest.TestCase):
     def mock_response(self, scores, status_code=200):
         response = Mock()
         response.status_code = status_code
-        response.json.return_value = scores
+        response.text = json.dumps({"emotionPredictions": [{"emotion": scores}]})
         response.raise_for_status.return_value = None
         return response
 
@@ -32,6 +33,20 @@ class TestEmotionDetector(unittest.TestCase):
             {"anger": 0.01, "disgust": 0.01, "fear": 0.01, "joy": 0.01, "sadness": 0.96}
         )
         self.assertEqual(emotion_detector("I feel sad")["dominant_emotion"], "sadness")
+
+    @patch("EmotionDetection.emotion_detection.requests.post")
+    def test_disgust(self, post):
+        post.return_value = self.mock_response(
+            {"anger": 0.01, "disgust": 0.96, "fear": 0.01, "joy": 0.01, "sadness": 0.01}
+        )
+        self.assertEqual(emotion_detector("That is disgusting")["dominant_emotion"], "disgust")
+
+    @patch("EmotionDetection.emotion_detection.requests.post")
+    def test_fear(self, post):
+        post.return_value = self.mock_response(
+            {"anger": 0.01, "disgust": 0.01, "fear": 0.96, "joy": 0.01, "sadness": 0.01}
+        )
+        self.assertEqual(emotion_detector("I am afraid")["dominant_emotion"], "fear")
 
     @patch("EmotionDetection.emotion_detection.requests.post")
     def test_bad_request(self, post):
