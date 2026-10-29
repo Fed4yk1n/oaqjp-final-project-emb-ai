@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Emotion Detector</title>
+</head>
+<body>
+  <main>
+    <h1>Emotion Detector</h1>
+    <form action="/emotionDetector" method="get">
+      <label for="textToAnalyze">Text to analyze</label>
+      <input id="textToAnalyze" name="textToAnalyze" value="{{ text or '' }}" required>
+      <button type="submit">Analyze</button>
+    </form>
+    {% if result %}
+    <section aria-live="polite">
+      <h2>Analysis</h2>
+      <p>Dominant emotion: <strong>{{ result.dominant_emotion }}</strong></p>
+      <ul>
+        {% for emotion in ("anger", "disgust", "fear", "joy", "sadness") %}
+        <li>{{ emotion }}: {{ result[emotion] }}</li>
+        {% endfor %}
+      </ul>
+    </section>
+    {% endif %}
+  </main>
+</body>
+</html>
